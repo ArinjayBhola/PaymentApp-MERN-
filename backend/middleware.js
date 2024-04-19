@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
     const token = authHeader.split(' ')[1];
     try {
         const decodedValue = jwt.verify(token, JWT_SECRET);
-        req.userId = decodedValue.userId
+        req.userId = decodedValue.userid
         next();
     } catch (error) {
         return res.status(403).json({});
