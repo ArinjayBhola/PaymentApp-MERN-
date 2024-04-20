@@ -8,7 +8,7 @@ const { authMiddleware } = require('../middleware');
 const router = express.Router();
 
 const signupBody = zod.object({
-    username: zod.string(),
+    email: zod.string().email(),
     firstname: zod.string(),
     lastname: zod.string(),
     password: zod.string()
@@ -23,7 +23,7 @@ router.post('/signup', async (req, res) => {
         });
     };
     const existingUser = await User.findOne({
-        username: req.body.username
+        email: req.body.email
     })
     if (existingUser) {
         return res.status(411).json({
@@ -31,7 +31,7 @@ router.post('/signup', async (req, res) => {
         });
     };
     const user = await User.create({
-        username: createPayload.username,
+        email: createPayload.email,
         firstname: createPayload.firstname,
         lastname: createPayload.lastname,
         password: createPayload.password
@@ -54,7 +54,7 @@ router.post('/signup', async (req, res) => {
 });
 
 const signinBody = zod.object({
-    username: zod.string(),
+    email: zod.string().email(),
     password: zod.string()
 })
 router.post('/signin', async (req, res) => {
@@ -66,7 +66,7 @@ router.post('/signin', async (req, res) => {
         });
     };
     const user = await User.findOne({
-        username: req.body.username,
+        email: req.body.email,
         password: req.body.password
     });
     if (!user) {
@@ -93,7 +93,7 @@ router.delete('/signin', async (req, res) => {
         });
     };
     const user = await User.findOne({
-        username: req.body.username,
+        email: req.body.email,
         password: req.body.password
     });
     if (!user) {
@@ -146,7 +146,7 @@ router.get('/bulk', async (req, res) => {
     });
     res.json({
         user: users.map((user) => ({
-            username: user.username,
+            email: user.email,
             firstname: user.firstname,
             lastname: user.lastname,
             _id: user._id
