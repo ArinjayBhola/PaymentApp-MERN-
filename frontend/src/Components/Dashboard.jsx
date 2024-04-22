@@ -1,6 +1,16 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
+  const [user, setUser] = useState([]);
+  const [filter, setFilter] = useState("");
+  const navigate = useNavigate();
+  useEffect(() => {
+    axios.get("http://localhost:3000/api/v1/user/bulk?filter=" + filter).then((res) => {
+      setUser(res.data.user);
+    });
+  }, [filter]);
   return (
     <div>
       <div className="flex justify-between items-center m-4 border-b-2">
@@ -14,27 +24,26 @@ const Dashboard = () => {
           type="text"
           placeholder="Search Users..."
           className="border rounded-lg px-4 py-2 mt-2 focus:outline-none focus:ring focus:border-blue-300"
+          onChange={(e) => {
+            setFilter(e.target.value);
+          }}
         />
       </div>
       <div>
-        <div className="flex justify-between items-center m-4">
-          <p className="text-lg">User1</p>
-          <button className="bg-black text-white p-2 rounded">
-            <Link to={"/send"}>Send Money</Link>
-          </button>
-        </div>
-        <div className="flex justify-between items-center m-4">
-          <p className="text-lg">User2</p>
-          <button className="bg-black text-white p-2 rounded">
-            <Link to={"/send"}>Send Money</Link>
-          </button>
-        </div>
-        <div className="flex justify-between items-center m-4">
-          <p className="text-lg">User3</p>
-          <button className="bg-black text-white p-2 rounded">
-            <Link to={"/send"}>Send Money</Link>
-          </button>
-        </div>
+        {user.map((data, index) => {
+          return (
+            <div key={index}>
+              <div className="flex justify-between items-center m-4">
+                <p className="text-lg">{data.firstname}</p>
+                <button
+                  className="bg-black text-white p-2 rounded"
+                  onClick={() => navigate("/send?id=" + data._id + "&name=" + data.firstname)}>
+                  Send Money
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
